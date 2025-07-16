@@ -1,0 +1,8 @@
+package com.pj.springboot.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.pj.springboot.model.MemberDTO;
+
+public interface MemberRepository extends JpaRepository<MemberDTO, String> {
+    // 기본적으로 findById(), existsById() 등을 자동 지원
+}

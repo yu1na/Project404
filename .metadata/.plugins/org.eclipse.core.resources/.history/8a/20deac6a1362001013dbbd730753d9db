@@ -1,0 +1,60 @@
+package com.pj.springboot;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model; // Model 클래스를 임포트합니다.
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class MainController {
+
+    @GetMapping("/")
+    public String home(Model model) { // Model을 매개변수로 추가
+        model.addAttribute("contentPage", "/WEB-INF/views/home.jsp"); // home.jsp를 콘텐츠로 설정
+        model.addAttribute("pageSpecificJs", ""); // 홈 페이지에 특화된 JS가 없다면 빈 문자열
+        return "layout/base"; // base.jsp를 반환
+    }
+
+    // 이 부분은 CalendarController에서 처리하고 있으므로, MainController에서는 삭제하는 것이 좋습니다.
+    // 만약 CalendarController가 없다면 이 메서드를 Model 기반으로 수정하여 사용합니다.
+    // @GetMapping("/calendar/calendar")
+    // public String calendar(Model model) {
+    //     model.addAttribute("contentPage", "/WEB-INF/views/calendar/calendar.jsp");
+    //     model.addAttribute("pageSpecificJs", "/WEB-INF/views/includes/calendar_js.jsp");
+    //     return "layout/base";
+    // }
+
+    @GetMapping("/report/list")
+    public String reportList(Model model) { // Model을 매개변수로 추가
+        model.addAttribute("contentPage", "/WEB-INF/views/report/list.jsp");
+        model.addAttribute("pageSpecificJs", ""); // 이 페이지에 특화된 JS가 없다면 빈 문자열
+        return "layout/base";
+    }
+
+    @GetMapping("/approval/list")
+    public String approvalList(Model model) { // Model을 매개변수로 추가
+        model.addAttribute("contentPage", "/WEB-INF/views/approval/list.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+
+    @GetMapping("/message/inbox")
+    public String messageInbox(Model model) { // Model을 매개변수로 추가
+        model.addAttribute("contentPage", "/WEB-INF/views/message/inbox.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+
+    @GetMapping("/docs/list")
+    public String docsList(Model model) { // Model을 매개변수로 추가
+        model.addAttribute("contentPage", "/WEB-INF/views/docs/list.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+
+    @GetMapping("/qna/list")
+    public String qnaList(Model model) { // Model을 매개변수로 추가
+        model.addAttribute("contentPage", "/WEB-INF/views/qna/list.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+}

@@ -1,0 +1,19 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%--
+    sidebar.jsp 파일은 base.jsp에 포함됩니다.
+    따라서 이 파일에는 <html>, <head>, <body> 태그를 절대 포함해서는 안 됩니다.
+    오직 좌측 사이드바의 HTML 조각만 여기에 작성합니다.
+--%>
+<div class="sidebar-container">
+    <div class="sidebar-header">
+        항공사 직원 포털
+    </div>
+    <ul class="sidebar-menu">
+        <li><a href="/calendar"><i class="bi bi-calendar"></i> 일정 관리</a></li>
+        <li><a href="/report"><i class="bi bi-file-earmark-bar-graph"></i> 업무 보고</a></li>
+        <li><a href="/approval"><i class="bi bi-check2-square"></i> 전자 결재</a></li>
+        <li><a href="/message"><i class="bi bi-envelope"></i> 쪽지함</a></li>
+        <li><a href="/docs"><i class="bi bi-folder"></i> 문서보관소</a></li>
+        <li><a href="/customer-support"><i class="bi bi-person-circle"></i> 고객응대</a></li>
+        </ul>
+</div>

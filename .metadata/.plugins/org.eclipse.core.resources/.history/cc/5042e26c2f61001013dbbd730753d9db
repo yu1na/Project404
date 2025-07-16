@@ -1,0 +1,15 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Top</title>
+	</head>
+	<body>
+	<div style="background-color: #004080; color: white; padding: 15px;">
+	  <span style="font-size: 20px;">✈ 항공사 직원 포털</span>
+	  <span style="float: right;">[로그아웃]</span>
+	</div>
+	</body>
+</html>

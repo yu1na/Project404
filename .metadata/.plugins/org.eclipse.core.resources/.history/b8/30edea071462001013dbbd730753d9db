@@ -1,0 +1,34 @@
+@GetMapping("/")
+public String home(Model model) {
+    model.addAttribute("contentPage", "/WEB-INF/views/home.jsp");
+    model.addAttribute("pageSpecificJs", "");
+    return "layout/base";
+}
+
+@GetMapping("/report/list")
+public String reportList(Model model) {
+    model.addAttribute("contentPage", "/WEB-INF/views/report/list.jsp");
+    model.addAttribute("pageSpecificJs", "");
+    return "layout/base";
+}
+
+@GetMapping("/approval/list")
+public String approvalList(Model model) {
+    model.addAttribute("contentPage", "/WEB-INF/views/approval/list.jsp");
+    model.addAttribute("pageSpecificJs", "");
+    return "layout/base";
+}
+
+@GetMapping("/message/inbox")
+public String messageInbox(Model model) {
+    model.addAttribute("contentPage", "/WEB-INF/views/message/inbox.jsp");
+    model.addAttribute("pageSpecificJs", "");
+    return "layout/base";
+}
+
+@GetMapping("/docs/list")
+public String docsList(Model model) {
+    model.addAttribute("contentPage", "/WEB-INF/views/docs/list.jsp");
+    model.addAttribute("pageSpecificJs", "");
+    return "layout/base";
+}

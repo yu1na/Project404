@@ -1,0 +1,229 @@
+<%@ page language="java" contentType="text/html; charset=UTF-UTF-8" pageEncoding="UTF-8"%>
+<%-- <!DOCTYPE html>, <html>, <head>, <body> 태그는 top.jsp에서 이미 시작됩니다. --%>
+
+<%-- 이 파일은 top.jsp의 main-content 안에 포함될 내용만 가집니다. --%>
+  <h2>📅 일정 관리</h2>
+  <div id="calendar"></div>
+
+<%-- FullCalendar JavaScript 라이브러리 및 스크립트 --%>
+<%-- 이 스크립트들은 top.jsp에서 <body> 태그가 닫히기 전에 한번만 로드되어야 합니다. --%>
+<%-- 따라서, 이 내용은 top.jsp 파일의 </body> 닫는 태그 바로 위에 추가해야 합니다. --%>
+<%-- (아래 script 블록은 calendar.jsp에서 제거하고 top.jsp로 이동해야 함) --%>
+<script>
+    // 이전에 calendar.jsp에 있던 JavaScript 코드를 여기에 옮겨옵니다.
+    // DOMContentLoaded 이벤트 리스너는 여전히 필요합니다.
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            locale: 'ko',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            initialView: 'dayGridMonth',
+            editable: true,
+            selectable: true,
+            dayMaxEvents: true,
+            eventLimit: true,
+
+            events: function(fetchInfo, successCallback, failureCallback) {
+                $.ajax({
+                    url: '/calendar/events',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        successCallback(data);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("이벤트 로드 실패: ", status, error);
+                        alert("이벤트 로드에 실패했습니다.");
+                        failureCallback(error);
+                    }
+                });
+            },
+
+            select: function(info) {
+                $('#eventId').val('');
+                $('#eventTitle').val('');
+                $('#eventDescription').val('');
+                $('#eventStart').val(moment(info.startStr).format('YYYY-MM-DDTHH:mm'));
+                $('#eventEnd').val(moment(info.endStr).format('YYYY-MM-DDTHH:mm'));
+                $('#eventAllDay').prop('checked', info.allDay);
+                $('#eventColor').val('#007bff');
+                $('#deleteEventBtn').hide();
+
+                eventModal.show();
+            },
+
+            eventClick: function(info) {
+                var event = info.event;
+                $('#eventId').val(event.id);
+                $('#eventTitle').val(event.title);
+                $('#eventDescription').val(event.extendedProps.description || '');
+                $('#eventStart').val(moment(event.start).format('YYYY-MM-DDTHH:mm'));
+                $('#eventEnd').val(event.end ? moment(event.end).format('YYYY-MM-DDTHH:mm') : '');
+                $('#eventAllDay').prop('checked', event.allDay);
+                $('#eventColor').val(event.backgroundColor || '#007bff');
+                $('#deleteEventBtn').show();
+
+                eventModal.show();
+            },
+
+            eventDrop: function(info) {
+                var event = info.event;
+                var updatedEvent = {
+                    id: event.id,
+                    title: event.title,
+                    start: moment(event.start).format('YYYY-MM-DDTHH:mm:ss'),
+                    end: event.end ? moment(event.end).format('YYYY-MM-DDTHH:mm:ss') : null,
+                    allDay: event.allDay,
+                    color: event.backgroundColor,
+                    description: event.extendedProps.description || ''
+                };
+                updateEvent(updatedEvent, info.revert);
+            },
+
+            eventResize: function(info) {
+                var event = info.event;
+                var updatedEvent = {
+                    id: event.id,
+                    title: event.title,
+                    start: moment(event.start).format('YYYY-MM-DDTHH:mm:ss'),
+                    end: event.end ? moment(event.end).format('YYYY-MM-DDTHH:mm:ss') : null,
+                    allDay: event.allDay,
+                    color: event.backgroundColor,
+                    description: event.extendedProps.description || ''
+                };
+                updateEvent(updatedEvent, info.revert);
+            }
+        });
+
+        calendar.render();
+
+        $('#saveEventBtn').on('click', function() {
+            var eventId = $('#eventId').val();
+            var eventData = {
+                title: $('#eventTitle').val(),
+                description: $('#eventDescription').val(),
+                start: moment($('#eventStart').val()).format('YYYY-MM-DDTHH:mm:ss'),
+                end: $('#eventEnd').val() ? moment($('#eventEnd').val()).format('YYYY-MM-DDTHH:mm:ss') : null,
+                allDay: $('#eventAllDay').is(':checked'),
+                color: $('#eventColor').val()
+            };
+
+            if (eventId) {
+                updateEvent(Object.assign({id: Number(eventId)}, eventData));
+            } else {
+                addEvent(eventData);
+            }
+            eventModal.hide();
+        });
+
+        $('#deleteEventBtn').on('click', function() {
+            if (confirm('이 일정을 삭제하시겠습니까?')) {
+                var eventId = $('#eventId').val();
+                deleteEvent(Number(eventId));
+                eventModal.hide();
+            }
+        });
+
+        function addEvent(eventData) {
+            $.ajax({
+                url: '/calendar/events',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(eventData),
+                success: function(response) {
+                    calendar.addEvent(response);
+                    alert('일정이 추가되었습니다.');
+                },
+                error: function(xhr, status, error) {
+                    console.error("이벤트 추가 실패: ", status, error);
+                    alert("일정 추가에 실패했습니다.");
+                }
+            });
+        }
+
+        function updateEvent(eventData, revertFunc) {
+            $.ajax({
+                url: '/calendar/events/' + eventData.id,
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(eventData),
+                success: function(response) {
+                    alert('일정이 수정되었습니다.');
+                },
+                error: function(xhr, status, error) {
+                    console.error("이벤트 수정 실패: ", status, error);
+                    alert("일정 수정에 실패했습니다.");
+                    if (revertFunc) revertFunc();
+                }
+            });
+        }
+
+        function deleteEvent(eventId) {
+            $.ajax({
+                url: '/calendar/events/' + eventId,
+                method: 'DELETE',
+                success: function() {
+                    calendar.getEventById(eventId).remove();
+                    alert('일정이 삭제되었습니다.');
+                },
+                error: function(xhr, status, error) {
+                    console.error("이벤트 삭제 실패: ", status, error);
+                    alert("일정 삭제에 실패했습니다.");
+                }
+            });
+        }
+    });
+</script>
+
+<%-- 이벤트 추가/수정 모달 (이 부분은 calendar.jsp에 그대로 둡니다) --%>
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="eventModalLabel">일정 상세/수정</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="eventForm">
+          <input type="hidden" id="eventId">
+          <div class="mb-3">
+            <label for="eventTitle" class="form-label">제목</label>
+            <input type="text" class="form-control" id="eventTitle" required>
+          </div>
+          <div class="mb-3">
+            <label for="eventDescription" class="form-label">설명/비고</label>
+            <textarea class="form-control" id="eventDescription" rows="3"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="eventStart" class="form-label">시작일시</label>
+            <input type="datetime-local" class="form-control" id="eventStart" required>
+          </div>
+          <div class="mb-3">
+            <label for="eventEnd" class="form-label">종료일시</label>
+            <input type="datetime-local" class="form-control" id="eventEnd">
+          </div>
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="eventAllDay">
+            <label class="form-check-label" for="eventAllDay">종일</label>
+          </div>
+          <div class="mb-3">
+            <label for="eventColor" class="form-label">색상</label>
+            <input type="color" class="form-control form-control-color" id="eventColor" value="#007bff">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger me-auto" id="deleteEventBtn">삭제</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        <button type="button" class="btn btn-primary" id="saveEventBtn">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+

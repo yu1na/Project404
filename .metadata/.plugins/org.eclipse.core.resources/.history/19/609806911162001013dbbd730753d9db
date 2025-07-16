@@ -1,0 +1,59 @@
+package com.pj.springboot.calendar;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/calendar") // /calendar로 시작하는 모든 요청을 처리
+public class CalendarController {
+
+    @Autowired
+    private CalendarService calendarService;
+
+    // GET /calendar 요청 시 calendar.jsp 뷰를 반환
+    @GetMapping
+    public String showCalendarPage() {
+        return "calendar/calendar"; // src/main/webapp/WEB-INF/views/calendar/calendar.jsp
+    }
+
+    // 모든 이벤트를 JSON 형태로 반환하는 API
+    @GetMapping("/events") // GET /calendar/events
+    @ResponseBody // JSON 응답을 위해 필요
+    public List<CalendarEvent> getCalendarEvents() {
+        return calendarService.getAllEvents();
+    }
+
+    // 새 이벤트를 추가하는 API
+    @PostMapping("/events") // POST /calendar/events
+    @ResponseBody
+    public ResponseEntity<CalendarEvent> addCalendarEvent(@RequestBody CalendarEvent event) {
+        CalendarEvent newEvent = calendarService.addEvent(event);
+        return new ResponseEntity<>(newEvent, HttpStatus.CREATED);
+    }
+
+    // 이벤트를 업데이트하는 API
+    @PutMapping("/events/{id}") // PUT /calendar/events/{id}
+    @ResponseBody
+    public ResponseEntity<CalendarEvent> updateCalendarEvent(@PathVariable Long id, @RequestBody CalendarEvent event) { // ID 타입을 Long으로 변경
+        CalendarEvent updatedEvent = calendarService.updateEvent(id, event);
+        if (updatedEvent != null) {
+            return new ResponseEntity<>(updatedEvent, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    // 이벤트를 삭제하는 API
+    @DeleteMapping("/events/{id}") // DELETE /calendar/events/{id}
+    @ResponseBody
+    public ResponseEntity<Void> deleteCalendarEvent(@PathVariable Long id) { // ID 타입을 Long으로 변경
+        if (calendarService.deleteEvent(id)) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 404 Not Found
+    }
+}

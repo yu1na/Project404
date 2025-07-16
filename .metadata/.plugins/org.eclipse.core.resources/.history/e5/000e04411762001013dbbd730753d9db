@@ -1,0 +1,13 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<div class="navbar-custom">
+    <a href="/" class="portal-title">✈ 항공사 직원 포털</a>
+    <nav style="flex-grow: 1; display: flex; justify-content: flex-end;">
+        <a href="/approval/list" class="nav-link">전자결재</a>
+        <a href="/report/list" class="nav-link">업무보고</a>
+        <a href="/message/inbox" class="nav-link">쪽지함</a>
+        <a href="/docs/list" class="nav-link">문서보관소</a>
+        <a href="/qna/list" class="nav-link">고객응대</a>
+        <a href="/calendar" class="nav-link">일정관리</a>
+    </nav>
+    <span class="logout-text">[로그아웃]</span>
+</div>

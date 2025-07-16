@@ -1,0 +1,36 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>sidebar</title>
+		<style>
+			/* 기본 링크 스타일 제거 */
+			.no-underline {
+				text-decoration: none; /* 밑줄 제거 */
+			}
+			/* 메뉴 항목 간 간격 조정 */
+			.menu-item {
+				margin-right: 20px; /* 각 메뉴 항목의 오른쪽 여백 */
+			}
+			/* 항공사 직원 포털 텍스트 색상 및 간격 */
+			.portal-title {
+				color: blue; /* 텍스트 색상을 흰색으로 */
+				margin-right: 30px; /* 로그아웃 버튼과의 간격 조정 */
+			}
+		</style>
+	</head>
+	<body>
+	<div style="width: 200px; height: 100vh; background: #e6f0ff; float: left; padding: 20px;">
+	  <ul style="list-style: none; padding: 0;">
+	    <li><a href="/calendar/calendar">📅 일정 관리</a></li>
+	    <li><a href="/report/list">📝 업무보고</a></li>
+	    <li><a href="/approval/list">📎 전자결재</a></li>
+	    <li><a href="/message/inbox">💬 쪽지함</a></li>
+	    <li><a href="/docs/list">📁 문서보관소</a></li>
+	    <li><a href="/qna/list">👥 고객응대</a></li>
+	  </ul>
+	</div>
+	</body>
+</html>

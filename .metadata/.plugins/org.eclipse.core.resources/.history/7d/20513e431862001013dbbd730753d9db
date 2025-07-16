@@ -1,0 +1,18 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%--
+    top.jsp 파일은 base.jsp에 포함됩니다.
+    따라서 이 파일에는 <html>, <head>, <body> 태그를 절대 포함해서는 안 됩니다.
+    오직 상단 내비게이션 바의 HTML 조각만 여기에 작성합니다.
+--%>
+<nav class="navbar-custom">
+    <a href="/" class="portal-title">항공사 직원 포털</a>
+    <div class="nav-links">
+        <a href="/electronic-approval" class="nav-link">전자결재</a>
+        <a href="/business-report" class="nav-link">업무보고</a>
+        <a href="/message" class="nav-link">쪽지함</a>
+        <a href="/document-archive" class="nav-link">문서보관소</a>
+        <a href="/customer-service" class="nav-link">고객응대</a>
+        <a href="/calendar" class="nav-link">일정관리</a>
+        <a href="/logout" class="nav-link">[로그아웃]</a>
+    </div>
+</nav>

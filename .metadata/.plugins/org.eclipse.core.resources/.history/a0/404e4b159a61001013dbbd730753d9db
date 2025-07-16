@@ -1,0 +1,137 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>항공사 직원 포털</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.13/main.min.css' rel='stylesheet' />
+        <style>
+            /* Reset some default browser styles */
+            body, html {
+                margin: 0;
+                padding: 0;
+                height: 100%; /* 전체 높이 100% 설정 */
+                display: flex; /* flexbox 사용을 위해 body를 flex 컨테이너로 설정 */
+                flex-direction: column; /* 자식 요소들을 수직으로 배치 */
+            }
+
+            /* Global Styles */
+            .no-underline {
+                text-decoration: none !important; /* 밑줄 제거 강제 적용 */
+            }
+            .menu-item {
+                margin-right: 20px;
+            }
+            .portal-title {
+                color: white !important;
+                margin-right: 30px;
+            }
+            /* 네비게이션 바 스타일 */
+            .navbar-custom {
+                background-color: #004080;
+                color: white;
+                padding: 15px;
+                display: flex;
+                align-items: center;
+                width: 100%; /* 상단 바 전체 너비 */
+            }
+            .navbar-custom .nav-link { /* 상단 메뉴 링크 색상 */
+                color: white !important;
+                margin-left: 20px; /* 메뉴 항목 간 간격 */
+            }
+            .navbar-custom .nav-link:hover {
+                 color: #add8e6 !important;
+            }
+
+            /* 메인 컨텐츠 영역 */
+            .wrapper {
+                display: flex; /* 사이드바와 메인 컨텐츠를 가로로 배치 */
+                flex: 1; /* 남은 공간을 모두 차지하도록 함 */
+            }
+            .main-content {
+                flex-grow: 1; /* 남은 공간을 모두 차지 */
+                padding: 20px;
+            }
+
+            /* 사이드바 스타일 */
+            .sidebar-container {
+                width: 200px;
+                background: #e6f0ff;
+                padding: 20px;
+                box-sizing: border-box;
+                flex-shrink: 0; /* 크기가 줄어들지 않도록 */
+            }
+            .sidebar-container ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .sidebar-container li {
+                margin-bottom: 15px;
+            }
+            .sidebar-container li a {
+                text-decoration: none;
+                color: #333;
+                font-size: 17px;
+                display: block;
+                padding: 5px 0;
+            }
+            .sidebar-container li a:hover {
+                color: #0056b3;
+            }
+
+            /* FullCalendar 버튼 스타일 조정 */
+            .fc-toolbar-title {
+                font-size: 1.5em;
+                color: #004080;
+            }
+            .fc-button {
+                background-color: #0056b3 !important;
+                border-color: #0056b3 !important;
+                color: white !important;
+            }
+            .fc-button:hover {
+                background-color: #004080 !important;
+                border-color: #004080 !important;
+            }
+            .fc-today-button {
+                background-color: #28a745 !important;
+                border-color: #28a745 !important;
+            }
+            .fc-today-button:hover {
+                background-color: #218838 !important;
+                border-color: #218838 !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="navbar-custom">
+            <a href="/" class="no-underline portal-title">
+              <span style="font-size: 20px;">✈ 항공사 직원 포털</span>
+            </a>
+            <nav class="flex text-base font-medium" style="flex-grow: 1; justify-content: flex-end;">
+              <a href="/approval/list" class="nav-link menu-item">전자결재</a>
+              <a href="/report/list" class="nav-link menu-item">업무보고</a>
+              <a href="/message/inbox" class="nav-link menu-item">쪽지함</a>
+              <a href="/docs/list" class="nav-link menu-item">문서보관소</a>
+              <a href="/qna/list" class="nav-link menu-item">고객응대</a>
+              <a href="/calendar" class="nav-link menu-item">일정관리</a>
+            </nav>
+            <span style="float: right;">[로그아웃]</span>
+        </div>
+
+        <div class="wrapper">
+            <div class="sidebar-container">
+                <ul style="list-style: none; padding: 0;">
+                    <li><a href="/calendar" class="no-underline">📅 일정 관리</a></li>
+                    <li><a href="/report/list" class="no-underline">📝 업무보고</a></li>
+                    <li><a href="/approval/list" class="no-underline">📎 전자결재</a></li>
+                    <li><a href="/message/inbox" class="no-underline">💬 쪽지함</a></li>
+                    <li><a href="/docs/list" class="no-underline">📁 문서보관소</a></li>
+                    <li><a href="/qna/list" class="no-underline">👥 고객응대</a></li>
+                </ul>
+            </div>
+
+          <div class="main-content">

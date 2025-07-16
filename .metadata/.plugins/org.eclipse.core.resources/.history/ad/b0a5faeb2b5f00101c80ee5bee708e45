@@ -1,0 +1,26 @@
+package com.pj.springboot.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Data;
+
+@Entity
+@Table(name = "basic1")
+@Data
+public class MemberDTO {
+
+    @Id
+    @Column(name = "USER_ID")
+    private String id;         // 아이디 (기본키)
+
+    @Column(name = "USER_PASS")
+    private String pass;       // 암호화된 비밀번호
+
+    @Column(name = "USER_ROLE")
+    private String role;       // 사용자 역할: USER, ADMIN 등
+
+    @Column(name = "ENABLED")
+    private int enabled;       // 계정 활성화 여부 (1 = 활성, 0 = 비활성)
+}

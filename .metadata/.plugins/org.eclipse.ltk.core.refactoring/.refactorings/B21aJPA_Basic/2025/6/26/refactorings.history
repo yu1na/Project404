@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename package &apos;com.edu.springboot.myjpa1&apos; to &apos;myjpa1&apos;&#x0D;&#x0A;- Original project: &apos;B21aJPA_Basic&apos;&#x0D;&#x0A;- Original element: &apos;B21aJPA_Basic/src/main/java/com.edu.springboot.myjpa1&apos;&#x0D;&#x0A;- Renamed element: &apos;B21aJPA_Basic/src/main/java/myjpa1&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename package &apos;com.edu.springboot.myjpa1&apos;" flags="589830" hierarchical="false" id="org.eclipse.jdt.ui.rename.package" input="/src\/main\/java=/gradle_scope=/main=/=/gradle_used_by_scope=/main,test=/&lt;com.edu.springboot.myjpa1" name="myjpa1" qualified="false" references="true" stamp="1750736837834" textual="false" version="1.0"/>
+</session>

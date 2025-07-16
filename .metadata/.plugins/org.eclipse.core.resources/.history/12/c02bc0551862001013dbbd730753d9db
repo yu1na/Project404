@@ -1,0 +1,140 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%--
+    캘린더 페이지에만 로드되는 JavaScript 코드입니다.
+    FullCalendar 초기화 및 관련 이벤트 핸들러를 여기에 작성합니다.
+    이 파일에도 <html>, <head>, <body> 태그를 포함해서는 안 됩니다.
+--%>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        if (calendarEl) {
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'ko',
+                height: 'auto',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                editable: true,
+                selectable: true,
+                navLinks: true,
+                dayMaxEvents: true,
+                events: [
+                    // 여기에 초기 이벤트 데이터를 추가할 수 있습니다.
+                    // 예: { title: '샘플 일정', start: '2025-07-17', allDay: true }
+                ],
+                dateClick: function(info) {
+                    // 날짜 클릭 시 모달 열기
+                    $('#eventModal').modal('show');
+                    $('#eventTitle').val('');
+                    $('#eventDescription').val('');
+                    $('#eventStartDate').val(info.dateStr + 'T09:00'); // 기본 시간 설정
+                    $('#eventEndDate').val(info.dateStr + 'T10:00');
+                    $('#allDayEvent').prop('checked', false);
+                    $('#eventColor').val('#007bff');
+                    $('#eventId').val(''); // 새 일정 추가 시 ID 초기화
+                    $('#deleteEventBtn').hide(); // 새 일정 추가 시 삭제 버튼 숨김
+                    $('#eventModalLabel').text('새 일정 추가');
+                },
+                eventClick: function(info) {
+                    // 이벤트 클릭 시 모달 열기 및 데이터 채우기
+                    $('#eventModal').modal('show');
+                    $('#eventTitle').val(info.event.title);
+                    $('#eventDescription').val(info.event.extendedProps.description || '');
+                    $('#eventStartDate').val(moment(info.event.start).format('YYYY-MM-DDTHH:mm'));
+                    $('#eventEndDate').val(info.event.end ? moment(info.event.end).format('YYYY-MM-DDTHH:mm') : '');
+                    $('#allDayEvent').prop('checked', info.event.allDay);
+                    $('#eventColor').val(info.event.backgroundColor || '#007bff');
+                    $('#eventId').val(info.event.id); // 이벤트 ID 설정
+                    $('#deleteEventBtn').show(); // 기존 일정 수정 시 삭제 버튼 표시
+                    $('#eventModalLabel').text('일정 상세/수정');
+                },
+                eventDrop: function(info) {
+                    // 드래그 드롭 후 이벤트 업데이트 로직 (Ajax 호출 필요)
+                    console.log('Event moved:', info.event.title, 'to', info.event.start);
+                    // alert(info.event.title + ' 이동됨!');
+                },
+                eventResize: function(info) {
+                    // 이벤트 크기 조절 후 업데이트 로직 (Ajax 호출 필요)
+                    console.log('Event resized:', info.event.title, 'new end:', info.event.end);
+                    // alert(info.event.title + ' 크기 변경됨!');
+                }
+            });
+            calendar.render();
+
+            // 모달 저장 버튼 클릭 이벤트
+            $('#saveEventBtn').on('click', function() {
+                var eventId = $('#eventId').val();
+                var title = $('#eventTitle').val();
+                var description = $('#eventDescription').val();
+                var start = $('#eventStartDate').val();
+                var end = $('#eventEndDate').val();
+                var allDay = $('#allDayEvent').is(':checked');
+                var color = $('#eventColor').val();
+
+                if (!title) {
+                    alert('제목을 입력해주세요.');
+                    return;
+                }
+
+                var eventData = {
+                    id: eventId, // ID가 있으면 수정, 없으면 추가
+                    title: title,
+                    start: start,
+                    end: end,
+                    allDay: allDay,
+                    backgroundColor: color,
+                    borderColor: color,
+                    extendedProps: {
+                        description: description
+                    }
+                };
+
+                if (eventId) {
+                    // 기존 이벤트 수정
+                    var existingEvent = calendar.getEventById(eventId);
+                    if (existingEvent) {
+                        existingEvent.setProp('title', title);
+                        existingEvent.setExtendedProp('description', description);
+                        existingEvent.setStart(start);
+                        existingEvent.setEnd(end);
+                        existingEvent.setAllDay(allDay);
+                        existingEvent.setProp('backgroundColor', color);
+                        existingEvent.setProp('borderColor', color);
+                        // DB 업데이트를 위한 AJAX 호출
+                        console.log('일정 수정:', eventData);
+                        alert('일정이 수정되었습니다.');
+                    }
+                } else {
+                    // 새 이벤트 추가
+                    calendar.addEvent(eventData);
+                    // DB 저장을 위한 AJAX 호출
+                    console.log('새 일정 추가:', eventData);
+                    alert('새 일정이 추가되었습니다.');
+                }
+
+                $('#eventModal').modal('hide');
+            });
+
+            // 모달 삭제 버튼 클릭 이벤트
+            $('#deleteEventBtn').on('click', function() {
+                if (confirm('이 일정을 삭제하시겠습니까?')) {
+                    var eventId = $('#eventId').val();
+                    if (eventId) {
+                        var eventToRemove = calendar.getEventById(eventId);
+                        if (eventToRemove) {
+                            eventToRemove.remove();
+                            // DB 삭제를 위한 AJAX 호출
+                            console.log('일정 삭제:', eventId);
+                            alert('일정이 삭제되었습니다.');
+                        }
+                    }
+                    $('#eventModal').modal('hide');
+                }
+            });
+        }
+    });
+</script>

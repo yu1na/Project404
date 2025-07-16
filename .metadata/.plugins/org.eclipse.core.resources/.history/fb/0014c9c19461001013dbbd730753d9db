@@ -1,0 +1,43 @@
+package com.pj.springboot;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class MainController {
+
+    @GetMapping("/")
+    public String home() {
+        return "home";
+    }
+
+    @GetMapping("/calendar")
+    public String calendar() {
+        return "calendar";
+    }
+
+    @GetMapping("/report/list")
+    public String reportList() {
+        return "report/list";
+    }
+
+    @GetMapping("/approval/list")
+    public String approvalList() {
+        return "approval/list";
+    }
+
+    @GetMapping("/message/inbox")
+    public String messageInbox() {
+        return "message/inbox";
+    }
+
+    @GetMapping("/docs/list")
+    public String docsList() {
+        return "docs/list";
+    }
+
+    @GetMapping("/qna/list")
+    public String qnaList() {
+        return "qna/list";
+    }
+}

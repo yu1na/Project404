@@ -1,0 +1,6 @@
+package com.pj.springboot.config;
+
+public class WebConfig
+{
+
+}

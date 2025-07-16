@@ -1,0 +1,72 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>일정 관리</title>
+    </head>
+<body>
+
+    <nav>
+        <a href="/">항공사 직원 포털</a>
+        <div>
+            <a href="/electronic-approval">전자결재</a>
+            <a href="/business-report">업무보고</a>
+            <a href="/message">쪽지함</a>
+            <a href="/document-archive">문서보관소</a>
+            <a href="/customer-service">고객응대</a>
+            <a href="/calendar">일정관리</a>
+            <a href="/logout">[로그아웃]</a>
+        </div>
+    </nav>
+
+    <div>
+        <div>
+            <div>
+                항공사 직원 포털
+            </div>
+            <ul>
+                <li><a href="/calendar"> 일정 관리</a></li>
+                <li><a href="/report"> 업무 보고</a></li>
+                <li><a href="/approval"> 전자 결재</a></li>
+                <li><a href="/message"> 쪽지함</a></li>
+                <li><a href="/docs"> 문서보관소</a></li>
+                <li><a href="/customer-support"> 고객응대</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <h1> 일정 관리</h1>
+            <div id='calendar'></div>
+
+            <div>
+                <div>
+                    <div>
+                        <h5>일정 상세/수정</h5>
+                        <button type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div>
+                        <form id="eventForm">
+                            <div><label for="eventTitle">제목</label><input type="text" id="eventTitle"></div>
+                            <div><label for="eventDescription">설명/비고</label><textarea id="eventDescription" rows="3"></textarea></div>
+                            <div><label for="eventStartDate">시작일시</label><input type="datetime-local" id="eventStartDate"></div>
+                            <div><label for="eventEndDate">종료일시</label><input type="datetime-local" id="eventEndDate"></div>
+                            <div><input type="checkbox" id="allDayEvent"><label for="allDayEvent">종일</label></div>
+                            <div><label for="eventColor">색상</label><input type="color" id="eventColor" value="#007bff"></div>
+                            <input type="hidden" id="eventId">
+                        </form>
+                    </div>
+                    <div>
+                        <button type="button" id="deleteEventBtn">삭제</button>
+                        <button type="button" data-bs-dismiss="modal">닫기</button>
+                        <button type="button" id="saveEventBtn">저장</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <c:import url="/WEB-INF/views/includes/calendar_js.jsp" />
+</body>
+</html>

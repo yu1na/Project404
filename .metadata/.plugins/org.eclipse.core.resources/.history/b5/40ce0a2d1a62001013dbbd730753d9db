@@ -1,0 +1,19 @@
+package com.pj.springboot;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class MainController {
+
+    @GetMapping("/")
+    public String home(Model model) {
+        // home.jsp를 /WEB-INF/views/home.jsp로 찾습니다.
+        model.addAttribute("contentPage", "home");
+        // 이 페이지에는 특정 JS가 없으므로 비워둡니다.
+        model.addAttribute("pageSpecificJs", "");
+        // layout/base.jsp를 렌더링합니다.
+        return "layout/base";
+    }
+}

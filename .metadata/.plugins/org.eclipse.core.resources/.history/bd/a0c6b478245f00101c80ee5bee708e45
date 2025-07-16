@@ -1,0 +1,24 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>main</title>
+	</head>
+	<div style="background-color: #004080; color: white; padding: 15px;">
+	  <span style="font-size: 20px;">✈ 항공사 직원 포털</span>
+	  <span style="float: right;">[로그아웃]</span>
+	</div>
+	
+	<div style="width: 200px; height: 100vh; background: #e6f0ff; float: left; padding: 20px;">
+	  <ul style="list-style: none; padding: 0;">
+	    <li><a href="/calendar">📅 일정 관리</a></li>
+	    <li><a href="/report/list">📝 업무보고</a></li>
+	    <li><a href="/approval/list">📎 전자결재</a></li>
+	    <li><a href="/message/inbox">💬 쪽지함</a></li>
+	    <li><a href="/docs/list">📁 문서보관소</a></li>
+	    <li><a href="/qna/list">👥 고객응대</a></li>
+	  </ul>
+	</div>
+</html>

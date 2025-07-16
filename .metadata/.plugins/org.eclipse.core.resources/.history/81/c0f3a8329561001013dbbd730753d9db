@@ -1,0 +1,41 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Top</title>
+		<style>
+			/* 기본 링크 스타일 제거 */
+			.no-underline {
+				text-decoration: none; /* 밑줄 제거 */
+			}
+			/* 메뉴 항목 간 간격 조정 */
+			.menu-item {
+				margin-right: 20px; /* 각 메뉴 항목의 오른쪽 여백 */
+			}
+			/* 항공사 직원 포털 텍스트 색상 및 간격 */
+			.portal-title {
+				color: white; /* 텍스트 색상을 흰색으로 */
+				margin-right: 30px; /* 로그아웃 버튼과의 간격 조정 */
+			}
+		</style>
+	</head>
+	<body>
+		<div style="background-color: #004080; color: white; padding: 15px; display: flex; align-items: center;">
+			<a href="/" class="no-underline portal-title">
+			  <span style="font-size: 20px;">✈ 항공사 직원 포털</span>
+			</a>
+
+		  	<nav class="flex text-base font-medium" style="flex-grow: 1; justify-content: flex-end;">
+			  <a href="/approval/list" class="hover:text-blue-600 no-underline menu-item" style="color: white;">전자결재</a>
+			  <a href="/report/list" class="hover:text-blue-600 no-underline menu-item" style="color: white;">업무보고</a>
+			  <a href="/message/inbox" class="hover:text-blue-600 no-underline menu-item" style="color: white;">쪽지함</a>
+			  <a href="/docs/list" class="hover:text-blue-600 no-underline menu-item" style="color: white;">문서보관소</a>
+			  <a href="/qna/list" class="hover:text-blue-600 no-underline menu-item" style="color: white;">고객응대</a>
+			  <a href="/calendar" class="hover:text-blue-600 no-underline menu-item" style="color: white;">일정관리</a>
+			</nav>
+			<span style="float: right;">[로그아웃]</span>
+		</div>
+	</body>
+</html>

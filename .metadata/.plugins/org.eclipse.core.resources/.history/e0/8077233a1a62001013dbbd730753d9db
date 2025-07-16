@@ -1,0 +1,18 @@
+package com.pj.springboot.calendar;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class CalendarController {
+
+    @GetMapping("/calendar")
+    public String calendar(Model model) {
+        // calendar/calendar.jsp를 /WEB-INF/views/calendar/calendar.jsp로 찾습니다.
+        model.addAttribute("contentPage", "calendar/calendar");
+        // calendar_js.jsp를 /WEB-INF/views/includes/calendar_js.jsp로 찾습니다.
+        model.addAttribute("pageSpecificJs", "includes/calendar_js");
+        return "layout/base";
+    }
+}

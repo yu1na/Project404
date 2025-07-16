@@ -1,0 +1,154 @@
+@charset "UTF-8";
+
+/* Global Reset & Layout */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column; /* 전체 페이지를 세로로 정렬 */
+            font-family: 'Arial', sans-serif;
+            color: #333;
+        }
+
+        /* Navbar Custom Styles (top.jsp의 스타일을 여기에 통합) */
+        .navbar-custom {
+            background-color: #004080; /* 진한 파란색 */
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .navbar-custom .portal-title {
+            font-size: 20px;
+            color: white !important;
+            text-decoration: none;
+            margin-right: 30px;
+            font-weight: bold;
+        }
+        .navbar-custom .nav-link {
+            color: white !important;
+            margin-left: 25px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .navbar-custom .nav-link:hover {
+            color: #add8e6 !important; /* 밝은 파란색 */
+        }
+        .navbar-custom .logout-text {
+            color: white;
+            margin-left: auto; /* 로그아웃을 오른쪽 끝으로 */
+        }
+
+        /* Wrapper for Sidebar and Main Content */
+        .wrapper {
+            display: flex;
+            flex: 1; /* 남은 수직 공간 모두 차지 */
+            width: 100%; /* 전체 너비 차지 */
+        }
+
+        /* Sidebar Styles (sidebar.jsp의 스타일을 여기에 통합) */
+        .sidebar-container {
+            width: 200px;
+            background: #e6f0ff; /* 연한 파란색 배경 */
+            padding: 20px;
+            box-sizing: border-box;
+            flex-shrink: 0; /* 사이드바 너비 고정 */
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            min-height: 100%; /* base.jsp의 body flex:1에 맞춰 높이 100% */
+        }
+        .sidebar-container ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-container li {
+            margin-bottom: 15px;
+        }
+        .sidebar-container li a {
+            text-decoration: none;
+            color: #333; /* 어두운 회색 텍스트 */
+            font-size: 17px;
+            display: block;
+            padding: 8px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .sidebar-container li a:hover {
+            background-color: #d0e0f8; /* 호버 시 더 연한 파란색 */
+            color: #0056b3;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex-grow: 1; /* 남은 공간 모두 차지 */
+            padding: 20px;
+            background-color: #f8f9fa; /* 아주 연한 회색 배경 */
+            overflow-y: auto; /* 내용이 넘칠 경우 스크롤 */
+        }
+
+        /* FullCalendar Specific Styles (calendar.jsp의 스타일을 여기에 통합) */
+        #calendar {
+            max-width: 900px; /* 캘린더 최대 너비 설정 */
+            margin: 20px auto; /* 중앙 정렬, 상단 여백 추가 */
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .fc-toolbar-title {
+            font-size: 1.8em;
+            color: #004080;
+            font-weight: bold;
+        }
+        .fc-button {
+            background-color: #007bff !important; /* 부트스트랩 primary 색상 */
+            border-color: #007bff !important;
+            color: white !important;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            transition: background-color 0.2s ease;
+        }
+        .fc-button:hover {
+            background-color: #0056b3 !important;
+            border-color: #0056b3 !important;
+        }
+        .fc-today-button {
+            background-color: #28a745 !important; /* 부트스트랩 success 색상 */
+            border-color: #28a745 !important;
+        }
+        .fc-today-button:hover {
+            background-color: #218838 !important;
+            border-color: #218838 !important;
+        }
+        .fc-event { /* 캘린더 이벤트 스타일 */
+            background-color: #007bff; /* 기본 이벤트 색상 */
+            border: 1px solid #007bff;
+            color: white;
+            border-radius: 3px;
+            padding: 2px 5px;
+            font-size: 0.85em;
+        }
+        /* Modal Styles (calendar.jsp의 스타일을 여기에 통합) */
+        .modal-content {
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            background-color: #004080;
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .modal-title {
+            font-weight: bold;
+        }
+        .btn-close {
+            filter: invert(1); /* 닫기 버튼 색상 변경 (흰색) */
+        }
+        .modal-footer {
+            border-top: 1px solid #e9ecef;
+        }

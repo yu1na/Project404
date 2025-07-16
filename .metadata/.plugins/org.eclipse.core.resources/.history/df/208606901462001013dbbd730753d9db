@@ -1,0 +1,51 @@
+package com.pj.springboot;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model; // Model 클래스를 임포트합니다.
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class MainController {
+
+    @GetMapping("/")
+    public String home(Model model) { // Model을 매개변수로 추가
+        model.addAttribute("contentPage", "/WEB-INF/views/home.jsp"); // home.jsp를 콘텐츠로 설정
+        model.addAttribute("pageSpecificJs", ""); // 홈 페이지에 특화된 JS가 없다면 빈 문자열
+        return "layout/base"; // base.jsp를 반환
+    }
+
+    @GetMapping("/report/list")
+    public String reportList(Model model) { // Model을 매개변수로 추가
+        model.addAttribute("contentPage", "/WEB-INF/views/report/list.jsp");
+        model.addAttribute("pageSpecificJs", ""); // 이 페이지에 특화된 JS가 없다면 빈 문자열
+        return "layout/base";
+    }
+
+    @GetMapping("/approval/list")
+    public String approvalList(Model model) { // Model을 매개변수로 추가
+        model.addAttribute("contentPage", "/WEB-INF/views/approval/list.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+
+    @GetMapping("/message/inbox")
+    public String messageInbox(Model model) { // Model을 매개변수로 추가
+        model.addAttribute("contentPage", "/WEB-INF/views/message/inbox.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+
+    @GetMapping("/docs/list")
+    public String docsList(Model model) { // Model을 매개변수로 추가
+        model.addAttribute("contentPage", "/WEB-INF/views/docs/list.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+
+    @GetMapping("/qna/list")
+    public String qnaList(Model model) { // Model을 매개변수로 추가
+        model.addAttribute("contentPage", "/WEB-INF/views/qna/list.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+}

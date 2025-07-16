@@ -1,0 +1,311 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%-- 상단 메뉴와 사이드바를 포함 --%>
+<%@ include file="/WEB-INF/views/top.jsp" %>
+<%@ include file="/WEB-INF/views/sidebar.jsp" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>일정 관리</title>
+    <%-- Bootstrap CSS (top.jsp에 이미 있지만, 혹시 몰라 한 번 더) --%>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <%-- FullCalendar CSS --%>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.13/main.min.css' rel='stylesheet' />
+    <style>
+        body {
+            display: flex; /* top.jsp와 sidebar.jsp의 구조를 고려 */
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .main-content-wrapper {
+            margin-left: 220px; /* 사이드바 너비 + 여백 */
+            padding: 20px;
+            flex-grow: 1; /* 남은 공간을 모두 차지하도록 */
+        }
+        #calendar {
+            max-width: 900px; /* 캘린더 최대 너비 설정 */
+            margin: 0 auto; /* 중앙 정렬 */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* FullCalendar 버튼 스타일 조정 */
+        .fc-toolbar-title {
+            font-size: 1.5em; /* 타이틀 크기 */
+            color: #004080;
+        }
+        .fc-button {
+            background-color: #0056b3 !important;
+            border-color: #0056b3 !important;
+            color: white !important;
+        }
+        .fc-button:hover {
+            background-color: #004080 !important;
+            border-color: #004080 !important;
+        }
+        .fc-today-button {
+            background-color: #28a745 !important;
+            border-color: #28a745 !important;
+        }
+        .fc-today-button:hover {
+            background-color: #218838 !important;
+            border-color: #218838 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-content-wrapper">
+      <h2>📅 일정 관리</h2>
+      <div id="calendar"></div>
+    </div>
+
+    <%-- jQuery (FullCalendar 필요) --%>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <%-- Bootstrap 5 JS (모달 등) --%>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <%-- FullCalendar Core JS --%>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.13/index.global.min.js'></script>
+    <%-- FullCalendar 한국어 로케일 (옵션) --%>
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core/locales/ko.global.min.js'></script>
+    <%-- moment.js (날짜 파싱 및 포맷팅, FullCalendar와 직접적인 의존성은 아니나 편의상 사용) --%>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
+
+
+    <%-- 이벤트 추가/수정 모달 --%>
+    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="eventModalLabel">일정 상세/수정</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="eventForm">
+              <input type="hidden" id="eventId">
+              <div class="mb-3">
+                <label for="eventTitle" class="form-label">제목</label>
+                <input type="text" class="form-control" id="eventTitle" required>
+              </div>
+              <div class="mb-3">
+                <label for="eventDescription" class="form-label">설명/비고</label>
+                <textarea class="form-control" id="eventDescription" rows="3"></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="eventStart" class="form-label">시작일시</label>
+                <input type="datetime-local" class="form-control" id="eventStart" required>
+              </div>
+              <div class="mb-3">
+                <label for="eventEnd" class="form-label">종료일시</label>
+                <input type="datetime-local" class="form-control" id="eventEnd">
+              </div>
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="eventAllDay">
+                <label class="form-check-label" for="eventAllDay">종일</label>
+              </div>
+              <div class="mb-3">
+                <label for="eventColor" class="form-label">색상</label>
+                <input type="color" class="form-control form-control-color" id="eventColor" value="#007bff">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger me-auto" id="deleteEventBtn">삭제</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            <button type="button" class="btn btn-primary" id="saveEventBtn">저장</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: 'ko', // 한국어 적용
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                initialView: 'dayGridMonth',
+                editable: true,
+                selectable: true,
+                dayMaxEvents: true,
+                eventLimit: true,
+
+                // 이벤트 데이터 로드
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    $.ajax({
+                        url: '/calendar/events', // CalendarController의 getCalendarEvents 매핑
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            // FullCalendar는 id를 문자열로도 잘 처리하므로, Long 타입이 그대로 와도 문제 없음
+                            successCallback(data);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("이벤트 로드 실패: ", status, error);
+                            alert("이벤트 로드에 실패했습니다.");
+                            failureCallback(error);
+                        }
+                    });
+                },
+
+                // 날짜 클릭 시 이벤트 추가
+                select: function(info) {
+                    $('#eventId').val(''); // ID 초기화 (새 이벤트)
+                    $('#eventTitle').val('');
+                    $('#eventDescription').val('');
+                    // FullCalendar info.start/end는 Date 객체. moment로 포맷팅
+                    $('#eventStart').val(moment(info.startStr).format('YYYY-MM-DDTHH:mm'));
+                    $('#eventEnd').val(moment(info.endStr).format('YYYY-MM-DDTHH:mm'));
+                    $('#eventAllDay').prop('checked', info.allDay);
+                    $('#eventColor').val('#007bff');
+                    $('#deleteEventBtn').hide(); // 새 이벤트 추가 시 삭제 버튼 숨김
+
+                    eventModal.show();
+                },
+
+                // 이벤트 클릭 시 상세/수정
+                eventClick: function(info) {
+                    var event = info.event;
+                    $('#eventId').val(event.id); // Long 타입 ID가 그대로 들어감
+                    $('#eventTitle').val(event.title);
+                    $('#eventDescription').val(event.extendedProps.description || '');
+                    $('#eventStart').val(moment(event.start).format('YYYY-MM-DDTHH:mm'));
+                    $('#eventEnd').val(event.end ? moment(event.end).format('YYYY-MM-DDTHH:mm') : ''); // 종료일이 없으면 빈 값
+                    $('#eventAllDay').prop('checked', event.allDay);
+                    $('#eventColor').val(event.backgroundColor || '#007bff');
+                    $('#deleteEventBtn').show(); // 기존 이벤트는 삭제 버튼 보임
+
+                    eventModal.show();
+                },
+
+                // 이벤트 드래그 후 날짜 변경
+                eventDrop: function(info) {
+                    var event = info.event;
+                    var updatedEvent = {
+                        id: event.id, // ID는 Long 타입으로 서버에 전달
+                        title: event.title,
+                        start: moment(event.start).format('YYYY-MM-DDTHH:mm:ss'),
+                        end: event.end ? moment(event.end).format('YYYY-MM-DDTHH:mm:ss') : null,
+                        allDay: event.allDay,
+                        color: event.backgroundColor,
+                        description: event.extendedProps.description || ''
+                    };
+                    updateEvent(updatedEvent, info.revert);
+                },
+
+                // 이벤트 리사이즈 후 기간 변경
+                eventResize: function(info) {
+                    var event = info.event;
+                    var updatedEvent = {
+                        id: event.id, // ID는 Long 타입으로 서버에 전달
+                        title: event.title,
+                        start: moment(event.start).format('YYYY-MM-DDTHH:mm:ss'),
+                        end: event.end ? moment(event.end).format('YYYY-MM-DDTHH:mm:ss') : null,
+                        allDay: event.allDay,
+                        color: event.backgroundColor,
+                        description: event.extendedProps.description || ''
+                    };
+                    updateEvent(updatedEvent, info.revert);
+                }
+            });
+
+            calendar.render(); // 캘린더 그리기
+
+            // 저장 버튼 클릭 시
+            $('#saveEventBtn').on('click', function() {
+                var eventId = $('#eventId').val(); // 문자열 형태의 ID
+                var eventData = {
+                    title: $('#eventTitle').val(),
+                    description: $('#eventDescription').val(),
+                    start: moment($('#eventStart').val()).format('YYYY-MM-DDTHH:mm:ss'),
+                    end: $('#eventEnd').val() ? moment($('#eventEnd').val()).format('YYYY-MM-DDTHH:mm:ss') : null,
+                    allDay: $('#eventAllDay').is(':checked'),
+                    color: $('#eventColor').val()
+                };
+
+                if (eventId) { // 기존 이벤트 수정
+                    // JavaScript에서 받은 ID는 문자열이므로, Long으로 변환 가능한지 확인하여 보냅니다.
+                    // Spring의 @PathVariable Long id가 문자열을 자동으로 Long으로 변환해줍니다.
+                    updateEvent(Object.assign({id: Number(eventId)}, eventData)); // Number()로 명시적 변환
+                } else { // 새 이벤트 추가
+                    addEvent(eventData);
+                }
+                eventModal.hide();
+            });
+
+            // 삭제 버튼 클릭 시
+            $('#deleteEventBtn').on('click', function() {
+                if (confirm('이 일정을 삭제하시겠습니까?')) {
+                    var eventId = $('#eventId').val(); // 문자열 형태의 ID
+                    deleteEvent(Number(eventId)); // Number()로 명시적 변환
+                    eventModal.hide();
+                }
+            });
+
+            // --- API 연동 함수들 ---
+            function addEvent(eventData) {
+                $.ajax({
+                    url: '/calendar/events',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(eventData),
+                    success: function(response) {
+                        // 서버에서 Long 타입의 id가 반환되므로, 그대로 FullCalendar에 추가.
+                        // FullCalendar는 숫자 ID도 잘 처리함.
+                        calendar.addEvent(response);
+                        alert('일정이 추가되었습니다.');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("이벤트 추가 실패: ", status, error);
+                        alert("일정 추가에 실패했습니다.");
+                    }
+                });
+            }
+
+            function updateEvent(eventData, revertFunc) {
+                $.ajax({
+                    url: '/calendar/events/' + eventData.id, // eventData.id는 이미 Number로 변환됨
+                    method: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(eventData),
+                    success: function(response) {
+                        alert('일정이 수정되었습니다.');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("이벤트 수정 실패: ", status, error);
+                        alert("일정 수정에 실패했습니다.");
+                        if (revertFunc) revertFunc();
+                    }
+                });
+            }
+
+            function deleteEvent(eventId) { // eventId는 이미 Number로 변환됨
+                $.ajax({
+                    url: '/calendar/events/' + eventId,
+                    method: 'DELETE',
+                    success: function() {
+                        calendar.getEventById(eventId).remove();
+                        alert('일정이 삭제되었습니다.');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("이벤트 삭제 실패: ", status, error);
+                        alert("일정 삭제에 실패했습니다.");
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

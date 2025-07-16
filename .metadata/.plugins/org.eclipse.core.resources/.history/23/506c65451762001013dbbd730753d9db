@@ -1,0 +1,11 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<div class="sidebar-container">
+    <ul>
+        <li><a href="/calendar">📅 일정 관리</a></li>
+        <li><a href="/report/list">📝 업무보고</a></li>
+        <li><a href="/approval/list">📎 전자결재</a></li>
+        <li><a href="/message/inbox">💬 쪽지함</a></li>
+        <li><a href="/docs/list">📁 문서보관소</a></li>
+        <li><a href="/qna/list">👥 고객응대</a></li>
+    </ul>
+</div>

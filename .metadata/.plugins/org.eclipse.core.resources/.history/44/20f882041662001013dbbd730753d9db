@@ -1,0 +1,79 @@
+package com.pj.springboot;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class MainController {
+
+    @GetMapping("/")
+    public String home(Model model) {
+        model.addAttribute("contentPage", "home.jsp"); // ✅ /WEB-INF/views/home.jsp
+        model.addAttribute("pageSpecificJs", ""); 
+        return "layout/base"; // ✅ /WEB-INF/views/layout/base.jsp
+    }
+
+    @GetMapping("/report/list")
+    public String reportList(Model model) {
+        model.addAttribute("contentPage", "report/list.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+
+    @GetMapping("/approval/list")
+    public String approvalList(Model model) {
+        model.addAttribute("contentPage", "approval/list.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+
+    @GetMapping("/message/inbox")
+    public String messageInbox(Model model) {
+        model.addAttribute("contentPage", "message/inbox.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+
+    @GetMapping("/docs/list")
+    public String docsList(Model model) {
+        model.addAttribute("contentPage", "docs/list.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+
+    @GetMapping("/qna/list")
+    public String qnaList(Model model) {
+        model.addAttribute("contentPage", "qna/list.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+
+    @GetMapping("/calendar/calendar")
+    public String calendarPage(Model model) {
+        model.addAttribute("contentPage", "calendar/calendar.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+
+    @GetMapping("/auth/login")
+    public String loginPage(Model model) {
+        model.addAttribute("contentPage", "auth/login.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+
+    @GetMapping("/auth/logout")
+    public String logoutPage(Model model) {
+        model.addAttribute("contentPage", "auth/logout.jsp");
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+
+    @GetMapping("/mypage")
+    public String mypage(Model model) {
+        model.addAttribute("contentPage", "auth/login.jsp"); // 예시: 마이페이지 없으면 login.jsp 재사용
+        model.addAttribute("pageSpecificJs", "");
+        return "layout/base";
+    }
+}

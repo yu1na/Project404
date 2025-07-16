@@ -1,0 +1,65 @@
+package com.pj.springboot.calendar;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model; // Model 클래스를 임포트합니다.
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/calendar") // /calendar로 시작하는 모든 요청을 처리
+public class CalendarController {
+
+    @Autowired
+    private CalendarService calendarService;
+
+    // GET /calendar 요청 시 base.jsp 뷰를 반환하며, 캘린더 콘텐츠를 설정
+    @GetMapping // GET /calendar
+    public String showCalendarPage(Model model) { // Model을 매개변수로 추가합니다.
+        // base.jsp가 사용할 contentPage와 pageSpecificJs를 Model에 추가합니다.
+        model.addAttribute("contentPage", "/WEB-INF/views/calendar/calendar.jsp");
+        model.addAttribute("pageSpecificJs", "/WEB-INF/views/includes/calendar_js.jsp");
+        
+        // 최종적으로 base.jsp를 반환합니다.
+        return "layout/base"; // src/main/webapp/WEB-INF/views/layout/base.jsp
+    }
+
+    // 모든 이벤트를 JSON 형태로 반환하는 API
+    @GetMapping("/events") // GET /calendar/events
+    @ResponseBody // JSON 응답을 위해 필요
+    public List<CalendarEvent> getCalendarEvents() {
+        return calendarService.getAllEvents();
+    }
+
+    // 새 이벤트를 추가하는 API
+    @PostMapping("/events") // POST /calendar/events
+    @ResponseBody
+    public ResponseEntity<CalendarEvent> addCalendarEvent(@RequestBody CalendarEvent event) {
+        CalendarEvent newEvent = calendarService.addEvent(event);
+        return new ResponseEntity<>(newEvent, HttpStatus.CREATED);
+    }
+
+    // 이벤트를 업데이트하는 API
+    @PutMapping("/events/{id}") // PUT /calendar/events/{id}
+    @ResponseBody
+    public ResponseEntity<CalendarEvent> updateCalendarEvent(@PathVariable Long id, @RequestBody CalendarEvent event) {
+        CalendarEvent updatedEvent = calendarService.updateEvent(id, event);
+        if (updatedEvent != null) {
+            return new ResponseEntity<>(updatedEvent, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    // 이벤트를 삭제하는 API
+    @DeleteMapping("/events/{id}") // DELETE /calendar/events/{id}
+    @ResponseBody
+    public ResponseEntity<Void> deleteCalendarEvent(@PathVariable Long id) {
+        if (calendarService.deleteEvent(id)) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+}

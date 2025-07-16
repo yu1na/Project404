@@ -1,0 +1,6 @@
+package com.pj.springboot.repository;
+
+public class MemberRepository
+{
+
+}

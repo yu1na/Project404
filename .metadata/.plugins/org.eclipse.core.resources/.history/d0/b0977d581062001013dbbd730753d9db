@@ -1,0 +1,57 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>sidebar</title>
+		<style>
+			body {
+				margin: 0; /* body의 기본 마진 제거 */
+				padding: 0; /* body의 기본 패딩 제거 */
+			}
+			.sidebar {
+				width: 200px;
+				height: 100vh;
+				background: #e6f0ff;
+				float: left; /* float 대신 flexbox를 추천하지만, 기존 유지 */
+				padding: 20px;
+				box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */
+			}
+			.sidebar ul {
+				list-style: none;
+				padding: 0;
+				margin: 0; /* ul의 기본 마진 제거 */
+			}
+			.sidebar li {
+				margin-bottom: 15px; /* 각 항목 아래에 15px 간격 추가 */
+				/* 마지막 li 항목에는 마진을 주지 않도록 할 수도 있습니다. (예: li:last-child { margin-bottom: 0; }) */
+			}
+			.sidebar li a {
+				text-decoration: none; /* 밑줄 제거 */
+				color: #333; /* 링크 색상을 기본 어두운 회색으로 설정 (원하는 색상으로 변경 가능) */
+				font-size: 17px; /* 1px 키운 크기 (기존 16px 가정) */
+				display: block; /* 링크 전체 영역 클릭 가능하도록 */
+				padding: 5px 0; /* 클릭 영역 확보를 위한 패딩 (선택 사항) */
+			}
+			.sidebar li a:hover {
+				color: #0056b3; /* 호버 시 색상 변경 (예: 진한 파랑) */
+			}
+
+			/* 이전 코드에 있던 불필요한 스타일은 제거했습니다. (no-underline, menu-item, portal-title) */
+			/* 이 sidebar.jsp는 단독으로 사용될 것이므로, 해당 스타일은 이 파일에만 적용되어야 합니다. */
+		</style>
+	</head>
+	<body>
+	<div class="sidebar"> <%-- 인라인 스타일을 클래스로 변경 --%>
+	  <ul>
+	    <li><a href="/calendar/calendar">📅 일정 관리</a></li>
+	    <li><a href="/report/list">📝 업무보고</a></li>
+	    <li><a href="/approval/list">📎 전자결재</a></li>
+	    <li><a href="/message/inbox">💬 쪽지함</a></li>
+	    <li><a href="/docs/list">📁 문서보관소</a></li>
+	    <li><a href="/qna/list">👥 고객응대</a></li>
+	  </ul>
+	</div>
+	</body>
+</html>
