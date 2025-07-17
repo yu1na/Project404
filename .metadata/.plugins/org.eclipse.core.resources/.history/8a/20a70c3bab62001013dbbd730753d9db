@@ -1,0 +1,35 @@
+// 새 스케줄 추가
+} else {
+    if (!scheduleId) {
+        delete scheduleData.scheduleId;  // ✅ 이 줄 꼭 넣기!
+    }
+
+    $.ajax({
+        url: '/api/schedules',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(scheduleData),
+        success: function(response) {
+            calendar.addEvent({
+                id: response.id,
+                title: response.title,
+                start: response.start,
+                end: response.end,
+                allDay: response.allDay,
+                backgroundColor: response.backgroundColor,
+                borderColor: response.borderColor,
+                extendedProps: {
+                    location: response.extendedProps.location,
+                    isRecurring: response.extendedProps.isRecurring,
+                    userId: response.extendedProps.userId
+                }
+            });
+            eventModal.hide();
+            alert('새 일정이 성공적으로 추가되었습니다.');
+        },
+        error: function(xhr, status, error) {
+            console.error('새 일정 추가 실패:', error);
+            alert('새 일정 추가에 실패했습니다.');
+        }
+    });
+}

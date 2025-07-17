@@ -1,0 +1,51 @@
+package com.pj.springboot.calendar;
+
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Entity
+@Table(name = "SCHEDULE")
+public class Schedule {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SCHEDULE_SEQ_GEN")
+    @SequenceGenerator(
+        name = "SCHEDULE_SEQ_GEN",           // JPA에서 쓸 시퀀스 제너레이터 이름
+        sequenceName = "SCHEDULE_SEQ",       // DB에 만들어진 시퀀스 이름
+        allocationSize = 1                   // 보통 1
+    )
+    @Column(name = "SCHEDULE_ID")
+    private Long scheduleId;
+
+    @Column(name = "USER_ID", length = 50)
+    private String userId;
+
+    @Column(name = "TITLE", length = 200)
+    private String title;
+
+    @Column(name = "START_TIME")
+    private LocalDateTime startTime;
+
+    @Column(name = "END_TIME")
+    private LocalDateTime endTime;
+
+    @Column(name = "LOCATION", length = 100)
+    private String location;
+
+    @Column(name = "IS_RECURRING", length = 1)
+    private String isRecurring; // "Y" or "N"
+
+    // "Y"/"N" → boolean 변환 메서드 (롬복은 boolean을 DB 필드와 바로 매핑하지 않으니 직접 구현)
+    public boolean isRecurringYn() {
+        return "Y".equalsIgnoreCase(this.isRecurring);
+    }
+    public void setRecurringYn(boolean recurring) {
+        this.isRecurring = recurring ? "Y" : "N";
+    }
+}

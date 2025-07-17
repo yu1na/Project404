@@ -1,0 +1,86 @@
+// Package Name: com.pj.springboot.calendar
+package com.pj.springboot.calendar;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@RestController
+public class CalendarController {
+
+    @Autowired
+    private ScheduleService scheduleService;
+
+    // 전체 스케줄 조회 (FullCalendar에 전달할 이벤트 목록)
+    @GetMapping("/api/schedules")
+    public List<Map<String, Object>> getAllSchedules() {
+        List<Schedule> schedules = scheduleService.findAllSchedules();
+
+        return schedules.stream().map(schedule -> {
+            Map<String, Object> event = new HashMap<>();
+            event.put("id", schedule.getScheduleId());
+            event.put("title", schedule.getTitle());
+            event.put("start", schedule.getStartTime().toString());
+            event.put("end", schedule.getEndTime() != null ? schedule.getEndTime().toString() : null);
+            event.put("allDay", schedule.getEndTime() == null &&
+                    schedule.getStartTime().toLocalTime().equals(java.time.LocalTime.MIDNIGHT) &&
+                    !schedule.getIsRecurringBoolean());
+            event.put("backgroundColor", "#2ecc71");
+            event.put("borderColor", "#2ecc71");
+
+            Map<String, Object> extendedProps = new HashMap<>();
+            extendedProps.put("location", schedule.getLocation());
+            extendedProps.put("isRecurring", schedule.getIsRecurringBoolean());
+            extendedProps.put("userId", schedule.getUserId());
+            event.put("extendedProps", extendedProps);
+
+            return event;
+        }).collect(Collectors.toList());
+    }
+
+    // 스케줄 저장 (신규 생성 또는 수정)
+    @PostMapping("/api/schedules")
+    public ResponseEntity<Object> saveSchedule(@RequestBody Schedule schedule) {
+        // 👉 시퀀스를 트리거하기 위해 scheduleId가 0 이하일 경우 null 처리
+        if (schedule.getScheduleId() != null && schedule.getScheduleId() <= 0) {
+            schedule.setScheduleId(null);
+        }
+
+        Schedule savedSchedule = scheduleService.saveSchedule(schedule);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", savedSchedule.getScheduleId());
+        response.put("title", savedSchedule.getTitle());
+        response.put("start", savedSchedule.getStartTime().toString());
+        response.put("end", savedSchedule.getEndTime() != null ? savedSchedule.getEndTime().toString() : null);
+        response.put("allDay", savedSchedule.getEndTime() == null &&
+                savedSchedule.getStartTime().toLocalTime().equals(java.time.LocalTime.MIDNIGHT) &&
+                !savedSchedule.getIsRecurringBoolean());
+        response.put("backgroundColor", "#2ecc71");
+        response.put("borderColor", "#2ecc71");
+
+        Map<String, Object> extendedProps = new HashMap<>();
+        extendedProps.put("location", savedSchedule.getLocation());
+        extendedProps.put("isRecurring", savedSchedule.getIsRecurringBoolean());
+        extendedProps.put("userId", savedSchedule.getUserId());
+        response.put("extendedProps", extendedProps);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    // 스케줄 삭제
+    @DeleteMapping("/api/schedules/{id}")
+    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id) {
+        Optional<Schedule> scheduleOpt = scheduleService.findScheduleById(id);
+        if (scheduleOpt.isPresent()) {
+            scheduleService.deleteSchedule(id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}

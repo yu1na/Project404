@@ -1,0 +1,41 @@
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "SCHEDULE")
+@Getter
+@Setter
+@NoArgsConstructor
+public class Schedule {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "schedule_seq_gen")
+    @SequenceGenerator(name = "schedule_seq_gen", sequenceName = "SCHEDULE_ID_SEQ", allocationSize = 1)
+    @Column(name = "SCHEDULE_ID")
+    private Long scheduleId;
+
+    @Column(name = "USER_ID", length = 50)
+    private String userId;
+
+    @Column(name = "TITLE", length = 200)
+    private String title;
+
+    @Column(name = "START_TIME")
+    private LocalDateTime startTime;
+
+    @Column(name = "END_TIME")
+    private LocalDateTime endTime;
+
+    @Column(name = "LOCATION", length = 100)
+    private String location;
+
+    @Column(name = "IS_RECURRING", length = 1)
+    private String isRecurring; // 'Y' or 'N'
+
+    // 커스텀 boolean getter: 이름만 다르게!
+    public boolean isRecurringYn() {
+        return "Y".equalsIgnoreCase(isRecurring);
+    }
+}

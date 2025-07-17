@@ -1,0 +1,87 @@
+// Package Name: com.pj.springboot.calendar
+package com.pj.springboot.calendar;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller; // @RestController 대신 @Controller로 변경
+import org.springframework.web.bind.annotation.*; // 필요한 어노테이션들을 임포트
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Controller // <--- @RestController를 @Controller로 변경합니다.
+@RequestMapping // <--- @RequestMapping("/api/schedules")를 제거합니다.
+public class CalendarController {
+
+    @Autowired
+    private ScheduleService scheduleService;
+
+    // 캘린더 페이지를 보여주는 요청 처리
+    @GetMapping("/calendar") // <--- 웹 브라우저에서 /calendar 로 접근했을 때 이 메서드가 실행됩니다.
+    public String showCalendarPage() {
+        return "calendar/calendar"; // src/main/webapp/WEB-INF/views/calendar/calendar.jsp 파일을 찾아서 보여줍니다.
+    }
+
+    // 모든 스케줄 조회 (FullCalendar가 초기 로드 시 사용)
+    @GetMapping("/api/schedules") // <--- REST API 요청은 이 경로로만 받습니다.
+    @ResponseBody // <--- JSON 데이터를 반환함을 명시합니다.
+    public ResponseEntity<List<Object>> getAllSchedules() {
+        List<Schedule> schedules = scheduleService.findAllSchedules();
+        // FullCalendar의 Event 객체 형식에 맞게 변환
+        List<Object> fcEvents = schedules.stream().map(schedule -> {
+            return new Object() {
+                public String id = schedule.getScheduleId().toString();
+                public String title = schedule.getTitle();
+                public String start = schedule.getStartTime().toString(); // ISO 8601 형식으로
+                public String end = schedule.getEndTime() != null ? schedule.getEndTime().toString() : null;
+                // allDay 로직은 실제 일정 데이터에 따라 정확히 조정 필요
+                public boolean allDay = schedule.getEndTime() == null && schedule.getStartTime().toLocalTime().equals(java.time.LocalTime.MIDNIGHT) && !schedule.getIsRecurringBoolean();
+                public String backgroundColor = "#2ecc71"; // Schedule 테이블에 color 필드 없으면 고정색
+                public String borderColor = "#2ecc71";
+                public Object extendedProps = new Object() { // 추가 필드는 extendedProps에 넣음
+                    // Schedule 테이블에는 description이 없으므로 null
+                    public String description = null;
+                    public String location = schedule.getLocation();
+                    public boolean isRecurring = schedule.getIsRecurringBoolean();
+                    public String userId = schedule.getUserId();
+                };
+            };
+        }).collect(Collectors.toList());
+        return new ResponseEntity<>(fcEvents, HttpStatus.OK);
+    }
+
+    // 스케줄 생성 또는 업데이트
+    @PostMapping("/api/schedules") // <--- REST API 요청은 이 경로로만 받습니다.
+    @ResponseBody // <--- JSON 데이터를 반환함을 명시합니다.
+    public ResponseEntity<Object> saveSchedule(@RequestBody Schedule schedule) {
+        Schedule savedSchedule = scheduleService.saveSchedule(schedule);
+
+        // FullCalendar 반환 형식에 맞게 변환하여 응답
+        Object fcEvent = new Object() {
+            public String id = savedSchedule.getScheduleId();
+            public String title = savedSchedule.getTitle();
+            public String start = savedSchedule.getStartTime().toString();
+            public String end = savedSchedule.getEndTime() != null ? savedSchedule.getEndTime().toString() : null;
+            public boolean allDay = savedSchedule.getEndTime() == null && savedSchedule.getStartTime().toLocalTime().equals(java.time.LocalTime.MIDNIGHT) && !savedSchedule.getIsRecurringBoolean();
+            public String backgroundColor = "#2ecc71";
+            public String borderColor = "#2ecc71";
+            public Object extendedProps = new Object() {
+                public String description = null;
+                public String location = savedSchedule.getLocation();
+                public boolean isRecurring = savedSchedule.getIsRecurringBoolean();
+                public String userId = savedSchedule.getUserId();
+            };
+        };
+        return new ResponseEntity<>(fcEvent, HttpStatus.CREATED);
+    }
+
+    // 스케줄 삭제
+    @DeleteMapping("/api/schedules/{id}") // <--- REST API 요청은 이 경로로만 받습니다.
+    @ResponseBody // <--- JSON 데이터를 반환함을 명시합니다.
+    public ResponseEntity<Void> deleteSchedule(@PathVariable String id) {
+        scheduleService.deleteSchedule(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+}

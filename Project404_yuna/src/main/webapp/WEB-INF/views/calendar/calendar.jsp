@@ -13,10 +13,10 @@
         body {
             background: linear-gradient(to bottom right, #e3f2fd, #ffffff);
             min-height: 100vh;
-            display: flex; /* flexbox를 사용하여 본문 내용을 중앙에 배치하기 위함 */
-            flex-direction: column; /* 세로 방향으로 정렬 */
-            margin: 0; /* 기본 마진 제거 */
-            padding: 0; /* 기본 패딩 제거 */
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
         }
         .navbar-nav .nav-link {
             font-weight: 500;
@@ -26,40 +26,35 @@
             font-weight: bold;
             color: #0d47a1 !important;
         }
-        /* 기존 calendar.jsp의 wrapper, sidebar-container, main-content 스타일을 새로운 레이아웃에 맞게 조정 */
         .wrapper {
-            flex-grow: 1; /* 남은 공간을 모두 차지하도록 하여 중앙 정렬을 도움 */
+            flex-grow: 1;
             display: flex;
-            /* 이전 sidebar-container와 main-content 스타일은 이 navbar-only 레이아웃에서는 불필요 */
-            /* 만약 사이드바를 다시 추가하고 싶다면 이 wrapper 내부에 추가적인 div를 구성해야 함 */
-            justify-content: center; /* 수평 중앙 정렬 (내용이 좁을 때) */
-            align-items: flex-start; /* 수직 상단 정렬 (내용이 길어질 경우) */
-            padding: 20px; /* 내부 여백 */
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
         }
-        .main-content { /* calendar 내용을 감싸는 div (이전 wrapper/main-content와 혼동 주의) */
-            max-width: 1200px; /* 캘린더 컨텐츠 최대 너비 */
+        .main-content {
+            max-width: 1200px;
             width: 100%;
             background-color: #fff;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        h1 { /* 캘린더 페이지의 제목 스타일 */
+        h1 {
             color: #2c3e50;
             margin-bottom: 25px;
             display: flex;
             align-items: center;
         }
-        h1 i { /* 캘린더 제목 옆 아이콘 */
+        h1 i {
             margin-right: 10px;
             font-size: 1.2em;
         }
-        #calendar { /* FullCalendar 컨테이너 */
+        #calendar {
             margin: 0 auto;
             padding: 20px 0;
         }
-
-        /* FullCalendar 기본 스타일 재정의 (선택 사항) */
         .fc .fc-button-primary {
             background-color: #3498db;
             border-color: #3498db;
@@ -69,7 +64,7 @@
             border-color: #2980b9;
         }
         .fc .fc-daygrid-event {
-            background-color: #2ecc71; /* 이벤트 배경색 */
+            background-color: #2ecc71;
             border-color: #2ecc71;
         }
         .fc-event {
@@ -78,8 +73,6 @@
             padding: 2px 5px;
             cursor: pointer;
         }
-
-        /* 모달창 스타일 (Bootstrap 기본 사용) */
         #eventModal .modal-header {
             background-color: #2c3e50;
             color: white;
@@ -89,7 +82,7 @@
             color: white;
         }
         #eventModal .btn-close {
-            filter: invert(1); /* 닫기 버튼을 흰색으로 */
+            filter: invert(1);
         }
         #eventModal .modal-footer {
             border-top: none;
@@ -121,7 +114,6 @@
             <h1><i class="bi bi-calendar"></i> 일정 관리</h1>
             <div id='calendar'></div>
 
-           
             <div id="eventModal" class="modal fade" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -131,13 +123,34 @@
                         </div>
                         <div class="modal-body">
                             <form id="eventForm">
-                                <div class="mb-3"><label for="eventTitle" class="form-label">제목</label><input type="text" class="form-control" id="eventTitle"></div>
-                                <div class="mb-3"><label for="eventDescription" class="form-label">설명/비고</label><textarea class="form-control" id="eventDescription" rows="3"></textarea></div>
-                                <div class="mb-3"><label for="eventStartDate" class="form-label">시작일시</label><input type="datetime-local" class="form-control" id="eventStartDate"></div>
-                                <div class="mb-3"><label for="eventEndDate" class="form-label">종료일시</label><input type="datetime-local" class="form-control" id="eventEndDate"></div>
-                                <div class="form-check mb-3"><input class="form-check-input" type="checkbox" id="allDayEvent"><label class="form-check-label" for="allDayEvent">종일</label></div>
-                                <div class="mb-3"><label for="eventColor" class="form-label">색상</label><input type="color" class="form-control form-control-color" id="eventColor" value="#007bff"></div>
                                 <input type="hidden" id="eventId">
+
+                                <input type="hidden" id="eventUserId" value="current_logged_in_user_id">
+
+                                <div class="mb-3">
+                                    <label for="eventTitle" class="form-label">제목</label>
+                                    <input type="text" class="form-control" id="eventTitle" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="eventStartDate" class="form-label">시작일시</label>
+                                    <input type="datetime-local" class="form-control" id="eventStartDate" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="eventEndDate" class="form-label">종료일시</label>
+                                    <input type="datetime-local" class="form-control" id="eventEndDate">
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="allDayEvent">
+                                    <label class="form-check-label" for="allDayEvent">종일</label>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="eventLocation" class="form-label">장소</label>
+                                    <input type="text" class="form-control" id="eventLocation">
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="isRecurringEvent">
+                                    <label class="form-check-label" for="isRecurringEvent">반복 일정</label>
+                                </div>
                             </form>
                         </div>
                         <div class="modal-footer">

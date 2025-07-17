@@ -1,0 +1,39 @@
+package com.pj.springboot.calendar;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class ScheduleService {
+
+    @Autowired
+    private ScheduleRepository scheduleRepository;
+
+    // 모든 스케줄 가져오기
+    public List<Schedule> findAllSchedules() {
+        return scheduleRepository.findAll();
+    }
+
+    // ID로 스케줄 가져오기
+    public Optional<Schedule> findScheduleById(Long id) {
+        return scheduleRepository.findById(id);
+    }
+
+    // 스케줄 저장 (신규/수정)
+    @Transactional
+    public Schedule saveSchedule(Schedule schedule) {
+        // isRecurring(문자열)이 'Y'/'N' 이외 값일 수도 있으니 한 번 더 보정!
+        schedule.setIsRecurring(schedule.isRecurringYn() ? "Y" : "N");
+        return scheduleRepository.save(schedule);
+    }
+
+    // 스케줄 삭제
+    @Transactional
+    public void deleteSchedule(Long id) {
+        scheduleRepository.deleteById(id);
+    }
+}

@@ -1,0 +1,88 @@
+package com.pj.springboot.calendar;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+
+@Controller
+public class CalendarController {
+
+    @Autowired
+    private ScheduleService scheduleService;
+
+    @GetMapping("/calendar")
+    public String showCalendarPage() {
+        return "calendar/calendar";
+    }
+
+    @GetMapping("/api/schedules")
+    @ResponseBody
+    public ResponseEntity<List<Map<String, Object>>> getAllSchedules() {
+        List<Schedule> schedules = scheduleService.findAllSchedules();
+
+        List<Map<String, Object>> fcEvents = schedules.stream().map(schedule -> {
+            Map<String, Object> event = new HashMap<>();
+            event.put("id", schedule.getScheduleId().toString());
+            event.put("title", schedule.getTitle());
+            event.put("start", schedule.getStartTime().toString());
+            event.put("end", schedule.getEndTime() != null ? schedule.getEndTime().toString() : null);
+            event.put("allDay", schedule.getEndTime() == null &&
+                    schedule.getStartTime().toLocalTime().equals(java.time.LocalTime.MIDNIGHT) &&
+                    !schedule.isRecurringYn()); // 여기만 변경!
+
+            event.put("backgroundColor", "#2ecc71");
+            event.put("borderColor", "#2ecc71");
+
+            Map<String, Object> extendedProps = new HashMap<>();
+            extendedProps.put("location", schedule.getLocation());
+            extendedProps.put("isRecurring", schedule.isRecurringYn());
+            extendedProps.put("userId", schedule.getUserId());
+            event.put("extendedProps", extendedProps);
+
+            return event;
+        }).collect(Collectors.toList());
+
+        return new ResponseEntity<>(fcEvents, HttpStatus.OK);
+    }
+
+    @PostMapping("/api/schedules")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> saveSchedule(@RequestBody Schedule schedule) {
+        // 저장
+        Schedule savedSchedule = scheduleService.saveSchedule(schedule);
+
+        // FullCalendar에서 사용 가능한 형식으로 변환
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", savedSchedule.getScheduleId().toString());
+        response.put("title", savedSchedule.getTitle());
+        response.put("start", savedSchedule.getStartTime().toString());
+        response.put("end", savedSchedule.getEndTime() != null ? savedSchedule.getEndTime().toString() : null);
+        response.put("allDay", savedSchedule.getEndTime() == null &&
+                savedSchedule.getStartTime().toLocalTime().equals(java.time.LocalTime.MIDNIGHT) &&
+                !savedSchedule.isRecurringYn()); // 여기만 변경!
+        response.put("backgroundColor", "#2ecc71");
+        response.put("borderColor", "#2ecc71");
+
+        Map<String, Object> extendedProps = new HashMap<>();
+        extendedProps.put("location", savedSchedule.getLocation());
+        extendedProps.put("isRecurring", savedSchedule.isRecurringYn());
+        extendedProps.put("userId", savedSchedule.getUserId());
+        response.put("extendedProps", extendedProps);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/api/schedules/{id}")
+    @ResponseBody
+    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id) {
+        scheduleService.deleteSchedule(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+}

@@ -1,0 +1,115 @@
+// Package Name: com.pj.springboot.calendar
+package com.pj.springboot.calendar;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "Schedule") // DB 테이블 이름과 정확히 일치
+public class Schedule {
+
+    @Id
+    @Column(name = "scheduleId", length = 50)
+    private String scheduleId;
+
+    @Column(name = "userId", length = 50)
+    private String userId;
+
+    @Column(name = "title", length = 200)
+    private String title;
+
+    @Column(name = "startTime")
+    private LocalDateTime startTime;
+
+    @Column(name = "endTime")
+    private LocalDateTime endTime;
+
+    @Column(name = "location", length = 100)
+    private String location;
+
+    @Column(name = "isRecurring", length = 1)
+    private String isRecurring; // 'Y' or 'N'
+
+    // 기본 생성자
+    public Schedule() {
+    }
+
+    // --- Getters and Setters ---
+    public String getScheduleId() {
+        return scheduleId;
+    }
+
+    public void setScheduleId(String scheduleId) {
+        this.scheduleId = scheduleId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    // isRecurring 필드는 CHAR(1) 'Y'/'N' 이므로 boolean으로 변환하는 로직 추가
+    public boolean getIsRecurringBoolean() {
+        return "Y".equalsIgnoreCase(this.isRecurring);
+    }
+
+    public void setIsRecurringBoolean(boolean isRecurring) {
+        this.isRecurring = isRecurring ? "Y" : "N";
+    }
+
+    public String getIsRecurring() { // DB 저장용
+        return isRecurring;
+    }
+
+    public void setIsRecurring(String isRecurring) { // DB 로드용
+        this.isRecurring = isRecurring;
+    }
+
+    @Override
+    public String toString() {
+        return "Schedule{" +
+               "scheduleId='" + scheduleId + '\'' +
+               ", userId='" + userId + '\'' +
+               ", title='" + title + '\'' +
+               ", startTime=" + startTime +
+               ", endTime=" + endTime +
+               ", location='" + location + '\'' +
+               ", isRecurring='" + isRecurring + '\'' +
+               '}';
+    }
+}

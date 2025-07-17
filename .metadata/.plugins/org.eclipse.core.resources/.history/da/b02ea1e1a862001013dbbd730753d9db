@@ -1,0 +1,45 @@
+// Package Name: com.pj.springboot.calendar
+package com.pj.springboot.calendar;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID; // scheduleId 생성을 위해 추가
+
+@Service
+public class ScheduleService {
+
+    @Autowired
+    private ScheduleRepository scheduleRepository;
+
+    // 모든 스케줄 가져오기
+    public List<Schedule> findAllSchedules() {
+        return scheduleRepository.findAll();
+    }
+
+    // ID로 스케줄 가져오기
+    public Optional<Schedule> findScheduleById(String id) {
+        return scheduleRepository.findById(id);
+    }
+
+    // 스케줄 저장 (새로운 스케줄 생성 또는 기존 스케줄 업데이트)
+    @Transactional
+    public Schedule saveSchedule(Schedule schedule) {
+        // 새로운 스케줄인 경우 ID를 자동 생성 (UUID 사용)
+        if (schedule.getScheduleId() == null || schedule.getScheduleId().isEmpty()) {
+            schedule.setScheduleId(UUID.randomUUID().toString());
+        }
+        // isRecurringBoolean을 통해 'Y'/'N' 설정
+        schedule.setIsRecurring(schedule.getIsRecurringBoolean() ? "Y" : "N");
+        return scheduleRepository.save(schedule);
+    }
+
+    // 스케줄 삭제
+    @Transactional
+    public void deleteSchedule(String id) {
+        scheduleRepository.deleteById(id);
+    }
+}

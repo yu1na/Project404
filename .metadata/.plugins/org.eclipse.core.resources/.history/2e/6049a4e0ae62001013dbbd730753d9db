@@ -1,0 +1,70 @@
+package com.pj.springboot.calendar;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "SCHEDULE") // 반드시 대문자, 언더스코어!
+public class Schedule {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "schedule_seq_gen")
+    @SequenceGenerator(name = "schedule_seq_gen", sequenceName = "SCHEDULE_SEQ", allocationSize = 1)
+    @Column(name = "SCHEDULE_ID") // PK와 정확히 매칭
+    private Long scheduleId;
+
+    @Column(name = "USER_ID", length = 50)
+    private String userId;
+
+    @Column(name = "TITLE", length = 200)
+    private String title;
+
+    @Column(name = "START_TIME")
+    private LocalDateTime startTime;
+
+    @Column(name = "END_TIME")
+    private LocalDateTime endTime;
+
+    @Column(name = "LOCATION", length = 100)
+    private String location;
+
+    @Column(name = "IS_RECURRING", length = 1)
+    private String isRecurring;
+
+    // 기본 생성자
+    public Schedule() {}
+
+    // --- Getters and Setters ---
+    public Long getScheduleId() { return scheduleId; }
+    public void setScheduleId(Long scheduleId) { this.scheduleId = scheduleId; }
+
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public LocalDateTime getStartTime() { return startTime; }
+    public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
+
+    public LocalDateTime getEndTime() { return endTime; }
+    public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+
+    public boolean getIsRecurringBoolean() { return "Y".equalsIgnoreCase(this.isRecurring); }
+    public void setIsRecurringBoolean(boolean isRecurring) { this.isRecurring = isRecurring ? "Y" : "N"; }
+
+    public String getIsRecurring() { return isRecurring; }
+    public void setIsRecurring(String isRecurring) { this.isRecurring = isRecurring; }
+
+    @Override
+    public String toString() {
+        return "Schedule{" +
+                "scheduleId=" + scheduleId +
+                ", userId='" + userId + '\'' +
+                ", title='" + title + '\'' +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", location='" + location + '\'' +
